@@ -1,0 +1,42 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+interface Dish {
+  name: string;
+  price: number;
+}
+
+const AddMenuPage: React.FC<{ route: { params: { selectedDishes: Dish[] } } }> = ({ route }) => {
+  const { selectedDishes } = route.params;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Selected Dishes</Text>
+      {selectedDishes.map((dish, index) => (
+        <Text key={index} style={styles.dishName}>
+          {dish.name} - R{dish.price.toFixed(2)}
+        </Text>
+      ))}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  dishName: {
+    fontSize: 18,
+    marginVertical: 5,
+  },
+});
+
+export default AddMenuPage;
