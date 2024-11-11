@@ -1,0 +1,124 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
+
+const AddDishPage: React.FC = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+  
+  const [dishName, setDishName] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [course, setCourse] = useState('Mains'); // Default selected course
+
+  const onDishAdded = route.params?.onDishAdded;
+
+  const handleAddDish = () => {
+    // Validation
+    if (!dishName || !description || !price) {
+      Alert.alert('Error', 'Please fill in all fields.');
+      return;
+    }
+
+    const priceValue = parseFloat(price);
+    if (isNaN(priceValue) || priceValue <= 0) {
+      Alert.alert('Error', 'Please enter a valid price greater than zero.');
+      return;
+    }
+
+    const newDish = {
+      name: dishName,
+      description,
+      price: priceValue,
+      category: course,
+    };
+
+    if (onDishAdded) {
+      onDishAdded(newDish);
+    }
+
+    Alert.alert('Dish Added', `Dish Name: ${dishName}`, [{ text: 'OK', onPress: () => navigation.goBack() }]);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Add a New Dish</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Dish Name"
+        value={dishName}
+        onChangeText={setDishName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={description}
+        onChangeText={setDescription}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Price (R)"
+        value={price}
+        keyboardType="numeric"
+        onChangeText={setPrice}
+      />
+      <Text style={styles.label}>Select Course:</Text>
+      <Picker
+        selectedValue={course}
+        style={styles.picker}
+        onValueChange={(itemValue) => setCourse(itemValue)}
+      >
+        <Picker.Item label="Mains" value="Mains" />
+        <Picker.Item label="Starters" value="Starters" />
+        <Picker.Item label="Desserts" value="Desserts" />
+      </Picker>
+      <TouchableOpacity style={styles.button} onPress={handleAddDish}>
+        <Text style={styles.buttonText}>Add Dish</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+// Styles for the component
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: 'white',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  label: {
+    marginBottom: 10,
+    fontSize: 16,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: '#32CD32',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+});
+
+export default AddDishPage;
